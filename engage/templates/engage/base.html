@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    // Для всех POST-форм
+    document.querySelectorAll('form[method="post"]').forEach(form => {
+        form.addEventListener('submit', function(e) {
+            if (!this.querySelector('[name=csrfmiddlewaretoken]')) {
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'csrfmiddlewaretoken';
+                hiddenInput.value = csrfToken;
+                this.appendChild(hiddenInput);
+            }
+        });
+    });
+});
+</script>
+
+
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+</body>
+</html>

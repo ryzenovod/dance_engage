@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ангажирование на бал</title>
+
+    <!-- Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <!-- Кастомные стили -->
+    <style>
+        .bg-pink { background-color: #ff69b4 !important; }
+        .bg-blue { background-color: #007bff !important; }
+        .avatar-border { border: 3px solid rgba(0,123,255,0.25); }
+        .bg-pink {background-color: #ff69b4 !important;}
+        .bg-role {
+                    padding: 0.5em 1em;
+                    border-radius: 20px;
+                    font-size: 1.1rem;
+                  }
+        .dance-card {
+                        transition: transform 0.2s;
+                    }
+        .dance-card:hover {
+                                transform: translateY(-5px);
+                                box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+                           }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <!-- Шапка -->
+        <header class="text-center mb-5">
+            <h1 class="display-4 text-primary fw-bold">
+                <i class="bi bi-balloon-heart me-2"></i>Ангажирование на бал
+            </h1>
+        </header>
+                    {% if messages %}
+                <div class="container mb-4">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% if not user.is_authenticated %}
+        <!-- Блок для гостей -->
+        <div class="row justify-content-center">
+            <div class="col-lg-6">
+                <div class="card border-0 shadow-lg">
+                    <div class="card-body p-5">
+                        <h2 class="card-title text-center mb-4">
+                            <i class="bi bi-door-open me-2"></i>Начните сейчас
+                        </h2>
+
+                        <!-- Форма регистрации -->
+                        <form method="post" action="{% url 'register' %}">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                {{ form.as_p }}
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100 py-2">
+                                <i class="bi bi-person-add me-2"></i>Создать аккаунт
+                            </button>
+                        </form>
+
+                        <div class="text-center mt-4">
+                            <a href="{% url 'select_skills' %}" class="btn btn-outline-dark">
+                                <i class="bi bi-arrow-right-circle me-2"></i>Войти
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <!-- Основной контент для авторизованных пользователей -->
+        <div class="card border-0 shadow-lg mb-5">
+            <div class="row g-0">
+                <!-- Аватар -->
+                <div class="col-md-4 bg-primary bg-opacity-10 p-4 text-center">
+                    <img src="https://cdn-icons-png.flaticon.com/512/2922/2922510.png"
+                         class="img-fluid rounded-circle avatar-border"
+                         style="max-width: 180px"
+                         alt="Аватар">
+                    <div class="mt-3">
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button class="btn btn-outline-danger">Выйти</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-md-8">
+                    <div class="card-body p-4">
+                        <h2 class="card-title mb-3">
+                            <i class="bi bi-person-badge me-2"></i>{{ user.username }}
+                        </h2>
+
+                        <div class="row g-3 mb-4">
+                            {% if user.profile %}
+                            <!-- Роль -->
+                            <div class="col-md-6">
+                                <div class="p-3 bg-white rounded-3 shadow-sm">
+                                    <h5 class="text-secondary mb-2">
+                                        <i class="bi bi-person-rolodex me-2"></i>Роль
+                                    </h5>
+                                    <span class="badge
+                                        {% if user.profile.role == 'Дама' %}bg-pink
+                                        {% elif user.profile.role == 'Кавалер' %}bg-primary
+                                        {% else %}bg-secondary{% endif %} text-white fs-6">
+                                        {{ user.profile.role|default:"Не указана" }}
+                                    </span>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+
+                        <!-- Действия -->
+                        <div class="d-grid gap-2">
+                            <a href="{% url 'select_skills' %}" class="btn btn-outline-dark btn-lg">
+                                <i class="bi bi-pencil-square me-2"></i>Изменить навыки
+                            </a>
+
+                            <a href="{% url 'select_engagements' %}" class="btn btn-outline-success btn-lg">
+                                <i class="bi bi-stars me-2"></i>Желаемые танцы
+                            </a>
+
+                            <a href="{% url 'edit_profile' %}" class="btn btn-outline-primary btn-lg">
+                                <i class="bi bi-gear-wide-connected me-2"></i>Настройки
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+                                <form method="get" class="row g-3 mb-4">
+                        <div class="col-md-5">
+                            <select name="dance" class="form-select">
+                                <option value="">Все танцы</option>
+                                {% for dance in all_dances %}
+                                    <option value="{{ dance.id }}" {% if request.GET.dance == dance.id|stringformat:"s" %}selected{% endif %}>
+                                        {{ dance.name }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <select name="status" class="form-select">
+                                <option value="">Все статусы</option>
+                                <option value="Ожидает" {% if request.GET.status == 'Ожидает' %}selected{% endif %}>Ожидает</option>
+                                <option value="Подтвержден" {% if request.GET.status == 'Подтвержден' %}selected{% endif %}>Подтверждён</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-outline-secondary w-100">
+                                <i class="bi bi-funnel-fill me-1"></i>Фильтр
+                            </button>
+                        </div>
+                    </form>
+            <h3 class="text-center">Мои Мэтчи</h3>
+            <div class="col-md-6 mx-auto">
+                <div class="list-group">
+                    {% for engagement in engagements %}
+    <div class="list-group-item d-flex justify-content-between align-items-center">
+        <div class="d-flex">
+            <img src="https://cdn-icons-png.flaticon.com/512/2922/2922510.png" class="rounded-circle me-3" style="width: 40px;">
+            <div>
+                <h5>{{ engagement.partner.username }}</h5>
+                <p>{{ engagement.dance.name }} - {{ engagement.status }}</p>
+            </div>
+        </div>
+        {% if engagement.partner and engagement.dance %}
+            <a href="{% url 'engage' engagement.partner.id engagement.dance.id %}" class="btn btn-outline-info btn-sm">Ангажировать</a>
+        {% else %}
+            <p>Нет данных для ангажирования</p>
+        {% endif %}
+    </div>
+{% empty %}
+    <div class="alert alert-info text-center">У вас пока нет мэтчей</div>
+{% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Секция танцев -->
+        <section class="mb-5">
+            <h3 class="h2 text-center mb-4">
+                <i class="bi bi-collection-play me-2"></i>Мои танцы
+            </h3>
+
+            <div class="row g-4">
+                {% for dance in profile.skills.all %}
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title text-center">
+                                <i class="bi bi-music-note me-2"></i>{{ dance.name }}
+                            </h5>
+
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item">
+                                    <i class="bi bi-speedometer2 me-2"></i>
+                                    Уровень:
+                                    <span class="badge {% if dance.level == 'Начальный' %}bg-warning
+                                          {% elif dance.level == 'Средний' %}bg-info
+                                          {% else %}bg-dark{% endif %}">
+                                        {{ dance.level }}
+                                    </span>
+                                </li>
+                                <li class="list-group-item">
+                                    <i class="bi bi-people me-2"></i>
+                                    Статус:
+                                    <span class="badge {% if dance.has_partner %}bg-success
+                                          {% else %}bg-danger{% endif %}">
+                                        {% if dance.has_partner %}Партнёр есть{% else %}Ищу партнёра{% endif %}
+                                    </span>
+                                </li>
+                            </ul>
+
+                            <div class="mt-3 text-center">
+                                <a href="{% url 'partner_list' dance.id %}"
+                                   class="btn btn-primary w-100">
+                                   <i class="bi bi-search me-2"></i>Найти партнёра
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <div class="alert alert-info">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-info-circle fs-3 me-3"></i>
+                            <div>
+                                Вы ещё не добавили танцы.
+                                <a href="{% url 'select_skills' %}" class="alert-link">
+                                    Начать выбор →
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

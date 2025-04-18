@@ -1,0 +1,1 @@
+default_app_config = 'engage.apps.EngageConfig'  # Добавьте эту строку!

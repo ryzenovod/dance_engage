@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <title>Ангажирования</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container py-5">
+
+    <!-- Заголовок и кнопка назад -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 text-primary"><i class="bi bi-chat-heart me-2"></i>Мои ангажирования</h1>
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-house-door me-1"></i>На главную
+        </a>
+    </div>
+
+    <!-- Фильтры -->
+    <form method="get" class="row g-3 mb-4">
+        {% csrf_token %}
+        <div class="col-md-5">
+            <label class="form-label">Танец</label>
+            <select name="dance" class="form-select">
+                <option value="">Все танцы</option>
+                {% for dance in all_dances %}
+                    <option value="{{ dance.id }}">
+                              {% if selected_dance == dance.id|stringformat:"s" %}selected{% endif %}
+                              {{ dance.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label">Статус</label>
+            <select name="status" class="form-select">
+                <option value="">Все</option>
+                <option value="pending"{% if selected_status == 'pending' %} selected{% endif %}>Ожидание</option>
+                <option value="confirmed"{% if selected_status == 'confirmed' %} selected{% endif %}>Подтверждено</option>
+                <option value="declined"{% if selected_status == 'declined' %} selected{% endif %}>Отклонено</option>
+            </select>
+        </div>
+        <div class="col-md-3 align-self-end">
+            <button type="submit" class="btn btn-primary w-100">
+                <i class="bi bi-filter me-1"></i>Фильтровать
+            </button>
+        </div>
+    </form>
+
+    <!-- Исходящие -->
+    <h4 class="mb-3">Отправленные</h4>
+    <div class="row g-3 mb-5">
+        {% for engagement in my_engagements %}
+            <div class="col-md-6">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="bi bi-person-fill-up me-2"></i>Вы ангажировали <strong>{{ engagement.partner.user.username }}</strong>
+                        </h5>
+                        <p class="mb-2">
+                            Танец: <strong>{{ engagement.dance.name }}</strong><br>
+                            Статус:
+                            <span class="badge
+                                {% if engagement.status == 'confirmed' %}bg-success
+                                {% elif engagement.status == 'pending' %}bg-warning
+                                {% else %}bg-danger{% endif %}">
+                                {{ engagement.get_status_display }}
+                            </span>
+                        </p>
+                        {% if engagement.status == 'confirmed' %}
+                            <span class="text-success">
+                                <i class="bi bi-star-fill me-1"></i>Это мэтч! Ваш партнёр подтвердил!
+                            </span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-muted">Вы пока никого не ангажировали.</p>
+        {% endfor %}
+    </div>
+
+    <!-- Входящие -->
+    <h4 class="mb-3">Запросы ко мне</h4>
+    <div class="row g-3">
+        {% for engagement in incoming_requests %}
+            <div class="col-md-6">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="bi bi-person-fill-down me-2"></i><strong>{{ engagement.dancer.user.username }}</strong> хочет танцевать с вами
+                        </h5>
+                        <p class="mb-2">Танец: <strong>{{ engagement.dance.name }}</strong></p>
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'confirm_engagement' engagement.id %}" class="btn btn-success btn-sm">
+                                <i class="bi bi-check-lg me-1"></i>Принять
+                            </a>
+                            <a href="{% url 'decline_engagement' engagement.id %}" class="btn btn-outline-danger btn-sm">
+                                <i class="bi bi-x-lg me-1"></i>Отклонить
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p class="text-muted">Пока никто не отправил вам ангажирование.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
