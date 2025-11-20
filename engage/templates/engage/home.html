@@ -70,7 +70,7 @@
     <div class="card-body">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <div class="d-flex align-items-center gap-3">
-                <img src="{{ profile.avatar.url }}" class="rounded-circle shadow" style="width:72px; height:72px; object-fit: cover;" alt="Аватар">
+                <img src="{{ profile.avatar_url }}" class="rounded-circle shadow" style="width:72px; height:72px; object-fit: cover;" alt="Аватар">
                 <div>
                     <h4 class="mb-1">{{ user.username }}</h4>
                     <span class="badge {% if profile.role == 'Дама' %}bg-danger{% else %}bg-primary{% endif %}">{{ profile.role }}</span>
@@ -117,7 +117,7 @@
             {% for engagement in engagements %}
                 <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap gap-3">
                     <div class="d-flex align-items-center gap-3">
-                        <img src="{{ engagement.partner.avatar.url|default:'https://cdn-icons-png.flaticon.com/512/2922/2922510.png' }}" class="rounded-circle" style="width:48px; height:48px; object-fit: cover;" alt="Аватар партнёра">
+                        <img src="{{ engagement.partner.avatar_url }}" class="rounded-circle" style="width:48px; height:48px; object-fit: cover;" alt="Аватар партнёра">
                         <div>
                             <h6 class="mb-1">{{ engagement.partner.user.username }}</h6>
                             <small class="text-muted">{{ engagement.dance.name }}</small>

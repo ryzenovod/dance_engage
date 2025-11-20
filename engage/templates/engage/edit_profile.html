@@ -11,7 +11,7 @@
             <form method="post" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="text-center mb-4">
-                    <img src="{{ request.user.userprofile.avatar.url }}" class="rounded-circle shadow" style="width: 150px; height: 150px; object-fit: cover;" alt="Текущий аватар">
+                    <img src="{{ request.user.userprofile.avatar_url }}" class="rounded-circle shadow" style="width: 150px; height: 150px; object-fit: cover;" alt="Текущий аватар">
                     <div class="mt-3">{{ form.avatar }}</div>
                 </div>
                 <div class="mb-4">

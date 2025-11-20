@@ -8,12 +8,66 @@
                 <h4 class="mb-0"><i class="bi bi-person-plus me-2"></i>Создание аккаунта</h4>
             </div>
             <div class="card-body p-4">
-                <form method="post">
+                <form method="post" novalidate>
                     {% csrf_token %}
-                    <div class="mb-3">{{ form.username.label_tag }}{{ form.username }}<div class="form-text">Введите ваш логин.</div></div>
-                    <div class="mb-3">{{ form.password1.label_tag }}{{ form.password1 }}<div class="form-text">Введите пароль.</div></div>
-                    <div class="mb-3">{{ form.password2.label_tag }}{{ form.password2 }}<div class="form-text">Подтвердите пароль.</div></div>
-                    <div class="mb-3">{{ form.role.label_tag }}{{ form.role }}<div class="form-text">Выберите роль: Дама или Кавалер.</div></div>
+
+                    {% if form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in form.non_field_errors %}{{ error }}<br>{% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        {{ form.username.label_tag }}
+                        {{ form.username }}
+                        {% if form.username.help_text %}
+                            <div class="form-text">{{ form.username.help_text }}</div>
+                        {% endif %}
+                        {% for error in form.username.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.password1.label_tag }}
+                        {{ form.password1 }}
+                        {% if form.password1.help_text %}
+                            <div class="form-text">{{ form.password1.help_text }}</div>
+                        {% endif %}
+                        {% for error in form.password1.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.password2.label_tag }}
+                        {{ form.password2 }}
+                        {% if form.password2.help_text %}
+                            <div class="form-text">{{ form.password2.help_text }}</div>
+                        {% endif %}
+                        {% for error in form.password2.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="mb-3">
+                        {{ form.role.label_tag }}
+                        {{ form.role }}
+                        {% if form.role.help_text %}
+                            <div class="form-text">{{ form.role.help_text }}</div>
+                        {% endif %}
+                        {% for error in form.role.errors %}
+                            <div class="invalid-feedback d-block">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="alert alert-info d-flex align-items-center" role="alert">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <div>
+                            После успешной регистрации вы автоматически попадёте на главную страницу и сможете выбрать навыки.
+                        </div>
+                    </div>
+
                     <button type="submit" class="btn btn-primary w-100 py-2"><i class="bi bi-person-plus me-2"></i>Зарегистрироваться</button>
                 </form>
             </div>

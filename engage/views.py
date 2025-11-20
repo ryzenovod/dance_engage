@@ -65,7 +65,10 @@ def register(request):
         if form.is_valid():
             user = form.save()
             login(request, user)  # автоматически логиним
+            messages.success(request, "Регистрация прошла успешно! Добро пожаловать на бал.")
             return redirect('home')
+        else:
+            messages.error(request, "Не удалось сохранить форму. Проверьте подсказки рядом с полями.")
     else:
         form = CustomUserCreationForm()
     return render(request, 'engage/register.html', {'form': form})

@@ -1,4 +1,5 @@
 # models.py
+from django.templatetags.static import static
 from django.db import models
 from django.contrib.auth.models import User
 
@@ -6,10 +7,21 @@ class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=10, choices=[('Дама', 'Дама'), ('Кавалер', 'Кавалер')])
     skills = models.ManyToManyField('Dance', blank=True)  # Не зависит от роли
-    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True, default='avatars/default.png')
+    avatar = models.ImageField(upload_to='avatars/', null=True, blank=True, default='')
 
     def __str__(self):
         return self.user.username
+
+    @property
+    def avatar_url(self):
+        """Безопасно возвращает URL аватара или дефолтную заглушку."""
+        try:
+            if self.avatar and hasattr(self.avatar, 'url'):
+                return self.avatar.url
+        except ValueError:
+            # Файл был удалён или путь некорректный
+            pass
+        return static('engage/avatar-placeholder.svg')
 
 class Dance(models.Model):
     name = models.CharField(max_length=100)
