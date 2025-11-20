@@ -27,19 +27,36 @@ def home(request):
     dance_filter = request.GET.get('dance')
     status_filter = request.GET.get('status')
 
-    engagements = profile.engagements.all() if profile else []
+    engagements = (
+        profile.engagements.select_related('partner__user', 'dance')
+        if profile else Engagement.objects.none()
+    )
 
     if dance_filter:
         engagements = engagements.filter(dance__id=dance_filter)
-    if status_filter:
+    if status_filter in dict(Engagement.STATUS_CHOICES):
         engagements = engagements.filter(status=status_filter)
 
     all_dances = Dance.objects.all()
+
+    engagement_stats = {
+        'total': engagements.count(),
+        'confirmed': engagements.filter(status='confirmed').count(),
+        'pending': engagements.filter(status='pending').count(),
+    }
+
+    skills_count = profile.skills.count() if profile else 0
+
+    register_form = None if request.user.is_authenticated else CustomUserCreationForm()
 
     return render(request, 'engage/home.html', {
         'profile': profile,
         'engagements': engagements,
         'all_dances': all_dances,
+        'status_choices': Engagement.STATUS_CHOICES,
+        'engagement_stats': engagement_stats,
+        'register_form': register_form,
+        'skills_count': skills_count,
     })
 
 def register(request):
@@ -122,10 +139,14 @@ def dance_list(request):
 
 @login_required
 def engage(request, partner_id, dance_id):
-    # Используем UserProfile вместо User
-    partner_profile = get_object_or_404(UserProfile, user__id=partner_id)  # <-- Ошибка была здесь
+    # Используем UserProfile напрямую
+    partner_profile = get_object_or_404(UserProfile, id=partner_id)
     dance = get_object_or_404(Dance, id=dance_id)
     current_profile = request.user.userprofile  # Текущий пользователь как UserProfile
+
+    if partner_profile == current_profile:
+        messages.warning(request, "Нельзя ангажировать самого себя.")
+        return redirect('partner_list', dance_id=dance.id)
 
     # Проверка существующего ангажирования
     if not Engagement.objects.filter(dancer=current_profile, dance=dance).exists():
@@ -135,6 +156,9 @@ def engage(request, partner_id, dance_id):
             dance=dance,
             status='pending'
         )
+        messages.success(request, "Приглашение отправлено!")
+    else:
+        messages.info(request, "У вас уже есть приглашение для этого танца.")
     return redirect('engagement_list')
 
 @login_required

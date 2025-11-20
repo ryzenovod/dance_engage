@@ -9,3 +9,35 @@
 аватарки тоже не работают, и это не потому что мне лень и я хочу спать, а анонимности ради и сохранения антуража бала :)
 
 прошу любить и жаловать https://dance-engage.serveo.net
+
+---
+
+## Как захостить на Cloud.ru (в ритме, но по делу)
+
+1. **Подготовка проекта**
+   - Убедитесь, что у вас есть Docker (для локальной проверки) и что в корне лежат `manage.py` и `requirements.txt`.
+   - Выполните локально: `python -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt`.
+   - Прогоните миграции: `python manage.py migrate` и создайте суперпользователя `python manage.py createsuperuser` при необходимости.
+
+2. **Сборка образа**
+   - Создайте `Dockerfile`, если его нет, с базовым образом `python:3.12-slim`, установкой зависимостей и командой запуска `gunicorn dance_project.wsgi:application --bind 0.0.0.0:8000`.
+   - Соберите образ: `docker build -t dance-engage:latest .`.
+
+3. **Загрузка в Container Registry Cloud.ru**
+   - Залогиньтесь в CR: `cr login` (или через web-консоль получите данные для `docker login`).
+   - Тегируйте образ: `docker tag dance-engage:latest cr.yandex/<project-id>/dance-engage:latest`.
+   - Запушьте: `docker push cr.yandex/<project-id>/dance-engage:latest`.
+
+4. **Развёртывание в Managed Kubernetes или Cloud.ru VM**
+   - Для Kubernetes: создайте Deployment и Service, пробросьте порт 8000, подключите PersistentVolume для `media/` и переменные окружения (`DJANGO_SECRET_KEY`, `DEBUG=false`).
+   - Для VM: поднимите VM с Ubuntu, поставьте Docker, запулите образ и запустите контейнер `docker run -d -p 80:8000 --env-file .env dance-engage:latest`.
+
+5. **База данных и статика**
+   - Лучше использовать управляемую PostgreSQL от Cloud.ru. Пропишите `DATABASE_URL` в `.env` и обновите `settings.py` на использование этого URL (через `dj-database-url`).
+   - Соберите статические файлы: `python manage.py collectstatic --noinput` и храните их либо в S3-совместимом облаке Cloud.ru, либо внутри контейнера с reverse-proxy Nginx.
+
+6. **Домен и HTTPS**
+   - Подключите домен через DNS Cloud.ru и выпустите сертификат (например, c certbot на VM или через ingress-контроллер в Kubernetes).
+
+7. **Мониторинг**
+   - Включите логи контейнера в Log Storage, настройте алерты по перезагрузкам и латентности HTTP, чтобы знать, если бал внезапно упадёт.
