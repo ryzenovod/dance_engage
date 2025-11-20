@@ -12,6 +12,17 @@
 
 ---
 
+
+## Как запустить локально на macOS
+
+1. Поставьте свежий Python (например, 3.12) и Xcode Command Line Tools, чтобы корректно собиралась Pillow для аватарок: `xcode-select --install` и при необходимости `brew install python@3.12`.
+2. Склонируйте проект и перейдите в папку: `git clone <repo-url> && cd dance_engage`.
+3. Создайте и активируйте виртуальное окружение: `python3 -m venv .venv && source .venv/bin/activate`.
+4. Обновите `pip` и установите зависимости: `python -m pip install --upgrade pip && pip install -r requirements.txt`.
+5. Примените миграции и создайте суперпользователя при желании: `python manage.py migrate` и `python manage.py createsuperuser`.
+6. Запустите дев-сервер: `python manage.py runserver 0.0.0.0:8000` и откройте http://localhost:8000/.
+7. Если нужна чистая база или тестовые данные, удалите `db.sqlite3` и повторите шаг 5.
+
 ## Как захостить на Cloud.ru (в ритме, но по делу)
 
 1. **Подготовка проекта**
