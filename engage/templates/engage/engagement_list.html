@@ -61,8 +61,14 @@
                         <h5 class="card-title"><i class="bi bi-person-fill-down me-2"></i><strong>{{ engagement.dancer.user.username }}</strong> хочет танцевать с вами</h5>
                         <p class="mb-2">Танец: <strong>{{ engagement.dance.name }}</strong></p>
                         <div class="d-flex gap-2">
-                            <a href="{% url 'confirm_engagement' engagement.id %}" class="btn btn-success btn-sm"><i class="bi bi-check-lg me-1"></i>Принять</a>
-                            <a href="{% url 'decline_engagement' engagement.id %}" class="btn btn-outline-danger btn-sm"><i class="bi bi-x-lg me-1"></i>Отклонить</a>
+                            <form method="post" action="{% url 'confirm_engagement' engagement.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-success btn-sm"><i class="bi bi-check-lg me-1"></i>Принять</button>
+                            </form>
+                            <form method="post" action="{% url 'decline_engagement' engagement.id %}" class="d-inline">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline-danger btn-sm"><i class="bi bi-x-lg me-1"></i>Отклонить</button>
+                            </form>
                         </div>
                     </div>
                 </div>

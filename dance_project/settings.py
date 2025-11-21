@@ -13,6 +13,11 @@ import os
 from pathlib import Path
 
 
+def getenv_bool(name: str, default: bool = False) -> bool:
+    """Return environment variable as boolean with safe defaults."""
+    return os.getenv(name, str(default)).lower() in {"1", "true", "yes", "on"}
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -21,17 +26,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-0ng+v%mrw9%x$!57*5xl0gk+72igokk)6h6kwean$z5vv7_-zy'
+SECRET_KEY = os.getenv(
+    "DJANGO_SECRET_KEY",
+    "dev-secret-change-me-please-rotate-0123456789abcdef",
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = getenv_bool("DJANGO_DEBUG", True)
 
-CSRF_COOKIE_HTTPONLY = False
-CSRF_COOKIE_SECURE = False
-CSRF_TRUSTED_ORIGINS = ['*']
-
-
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [host for host in os.getenv("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",") if host]
 
 
 # Application definition
@@ -138,9 +141,23 @@ LOGOUT_REDIRECT_URL = '/accounts/login/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
-ALLOWED_HOSTS = ['*']  # Не рекомендуется для продакшена
 CSRF_TRUSTED_ORIGINS = [
-    'https://*.serveo.net',
-    'https://*.ngrok.io',
-    'https://*.localhost.run',
+    origin
+    for origin in os.getenv(
+        "DJANGO_CSRF_TRUSTED_ORIGINS",
+        "http://localhost:8000,http://127.0.0.1:8000,https://*.ngrok.io,https://*.serveo.net,https://*.localhost.run",
+    ).split(",")
+    if origin
 ]
+
+# Harden cookies when running behind HTTPS (opt-in for local dev)
+SECURE_SSL_REDIRECT = getenv_bool("DJANGO_SECURE_SSL", not DEBUG)
+SESSION_COOKIE_SECURE = SECURE_SSL_REDIRECT
+CSRF_COOKIE_SECURE = SECURE_SSL_REDIRECT
+CSRF_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_SAMESITE = "Lax"
+SECURE_HSTS_SECONDS = 3600 if SECURE_SSL_REDIRECT else 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = SECURE_SSL_REDIRECT
+SECURE_HSTS_PRELOAD = SECURE_SSL_REDIRECT
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https") if SECURE_SSL_REDIRECT else None

@@ -4,12 +4,14 @@ from django.contrib.auth.views import LoginView
 from django.contrib.auth import login
 from django.contrib import messages
 from django.urls import reverse
+from django.views.decorators.http import require_POST
 
 from .forms import ProfileForm, CustomLoginForm, CustomUserCreationForm
 from .models import UserProfile, Dance, Engagement  # Убедитесь, что UserProfile импортирован
 import random
 
 @login_required
+@require_POST
 def confirm_engagement(request, engagement_id):
     engagement = get_object_or_404(
         Engagement,
@@ -83,8 +85,13 @@ def select_skills(request):
     dances = Dance.objects.all()
 
     if request.method == "POST":
-        selected_ids = request.POST.getlist('dances')
-        selected_ids = [int(id) for id in selected_ids]
+        selected_ids = []
+        for raw_id in request.POST.getlist('dances'):
+            try:
+                selected_ids.append(int(raw_id))
+            except (TypeError, ValueError):
+                continue
+
         profile.skills.set(selected_ids)
         return redirect('home')
 
@@ -141,6 +148,7 @@ def dance_list(request):
     return render(request, 'engage/dance_list.html', {'dances': dances})
 
 @login_required
+@require_POST
 def engage(request, partner_id, dance_id):
     # Используем UserProfile напрямую
     partner_profile = get_object_or_404(UserProfile, id=partner_id)
@@ -194,6 +202,7 @@ def engagement_list(request):
 
 # Пример для decline_engagement
 @login_required
+@require_POST
 def decline_engagement(request, engagement_id):
     engagement = get_object_or_404(
         Engagement,

@@ -1,12 +1,12 @@
-# models.py
 from django.templatetags.static import static
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=10, choices=[('Дама', 'Дама'), ('Кавалер', 'Кавалер')])
-    skills = models.ManyToManyField('Dance', blank=True)  # Не зависит от роли
+    skills = models.ManyToManyField('Dance', blank=True)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True, default='')
 
     def __str__(self):
@@ -23,6 +23,7 @@ class UserProfile(models.Model):
             pass
         return static('engage/avatar-placeholder.svg')
 
+
 class Dance(models.Model):
     name = models.CharField(max_length=100)
     level = models.CharField(max_length=50)
@@ -30,6 +31,7 @@ class Dance(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Engagement(models.Model):
     STATUS_CHOICES = [
@@ -44,7 +46,7 @@ class Engagement(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
-        unique_together = ('dancer', 'dance')  # Теперь 'dancer' корректно ссылается на поле
+        unique_together = ('dancer', 'dance')
         ordering = ['-created_at']
 
     def __str__(self):

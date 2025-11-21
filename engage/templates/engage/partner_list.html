@@ -26,10 +26,13 @@
                                     </div>
                                 </div>
                                 <div class="text-center">
-                                    <a href="{% url 'engage' partner.id dance.id %}" class="btn btn-success w-100"><i class="bi bi-send-check me-2"></i>Отправить приглашение</a>
-                                </div>
+                                <form method="post" action="{% url 'engage' partner.id dance.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-success w-100"><i class="bi bi-send-check me-2"></i>Отправить приглашение</button>
+                                </form>
                             </div>
                         </div>
+                    </div>
                     </div>
                 {% empty %}
                     <div class="col-12">
