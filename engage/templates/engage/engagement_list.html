@@ -1,4 +1,5 @@
 {% extends 'engage/base.html' %}
+{% load static %}
 {% block title %}Ангажирования{% endblock %}
 {% block content %}
 <div class="container py-4">
@@ -37,12 +38,31 @@
             <div class="col-md-6">
                 <div class="card shadow-sm border-0 h-100">
                     <div class="card-body">
-                        <h5 class="card-title"><i class="bi bi-person-fill-up me-2"></i>Вы ангажировали <strong>{{ engagement.partner.user.username }}</strong></h5>
+                        <div class="d-flex align-items-center gap-3 mb-2">
+                            {% if engagement.status == 'confirmed' %}
+                                <img src="{{ engagement.partner.avatar_url }}" class="rounded-circle" style="width:48px; height:48px; object-fit: cover;" alt="Фото {{ engagement.partner.user.get_full_name|default:engagement.partner.user.username }}">
+                                <div>
+                                    <div class="fw-semibold">{{ engagement.partner.user.get_full_name|default:engagement.partner.user.username }}</div>
+                                    <div class="text-muted small">Ник: {{ engagement.partner.user.username }}</div>
+                                </div>
+                            {% else %}
+                                <div class="rounded-circle bg-light text-secondary d-flex align-items-center justify-content-center" style="width:48px; height:48px;">
+                                    <i class="bi bi-person-fill-lock"></i>
+                                </div>
+                                <div>
+                                    <div class="fw-semibold">Ник: {{ engagement.partner.user.username }}</div>
+                                    <div class="text-muted small">Имя и фото откроются после взаимного мэтча</div>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <h5 class="card-title mb-2"><i class="bi bi-person-fill-up me-2"></i>Вы ангажировали партнёра</h5>
                         <p class="mb-2">Танец: <strong>{{ engagement.dance.name }}</strong><br>
                             Статус: <span class="badge bg-{{ engagement.status_badge_class }}">{{ engagement.get_status_display }}</span>
                         </p>
                         {% if engagement.status == 'confirmed' %}
-                            <span class="text-success"><i class="bi bi-star-fill me-1"></i>Это мэтч! Ваш партнёр подтвердил!</span>
+                            <span class="text-success"><i class="bi bi-star-fill me-1"></i>Это мэтч! Ваш партнёр подтвердил! Реальное имя и фото открыты.</span>
+                        {% else %}
+                            <span class="text-muted small"><i class="bi bi-incognito me-1"></i>Личные данные скрыты до подтверждения.</span>
                         {% endif %}
                     </div>
                 </div>
