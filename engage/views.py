@@ -6,9 +6,24 @@ from django.contrib import messages
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
+from collections import defaultdict
+import random
+
 from .forms import ProfileForm, CustomLoginForm, CustomUserCreationForm
 from .models import UserProfile, Dance, Engagement  # Убедитесь, что UserProfile импортирован
-import random
+from .dance_data import LEVEL_ORDER
+from .dance_loader import ensure_dances_seeded
+
+
+def group_dances_by_level(dances):
+    buckets = defaultdict(list)
+    for dance in dances:
+        buckets[dance.level].append(dance)
+
+    ordered_groups = [(level, buckets[level]) for level in LEVEL_ORDER if buckets[level]]
+    leftovers = [(level, group) for level, group in buckets.items() if level not in LEVEL_ORDER]
+
+    return ordered_groups + leftovers
 
 @login_required
 @require_POST
@@ -39,7 +54,7 @@ def home(request):
     if status_filter in dict(Engagement.STATUS_CHOICES):
         engagements = engagements.filter(status=status_filter)
 
-    all_dances = Dance.objects.all()
+    all_dances = ensure_dances_seeded().order_by('name')
 
     engagement_stats = {
         'total': engagements.count(),
@@ -82,7 +97,8 @@ class MyLoginView(LoginView):
 @login_required
 def select_skills(request):
     profile = request.user.userprofile
-    dances = Dance.objects.all()
+    dances = ensure_dances_seeded().order_by('name')
+    dances_by_level = group_dances_by_level(dances)
 
     if request.method == "POST":
         selected_ids = []
@@ -96,7 +112,7 @@ def select_skills(request):
         return redirect('home')
 
     return render(request, 'engage/skills.html', {
-        'dances': dances,
+        'dances_by_level': dances_by_level,
         'selected_dances': profile.skills.all()
     })
 
@@ -116,7 +132,8 @@ def edit_profile(request):
 @login_required
 def select_engagements(request):
     profile = request.user.userprofile
-    dances = Dance.objects.all()
+    dances = ensure_dances_seeded().order_by('name')
+    dances_by_level = group_dances_by_level(dances)
 
     if request.method == "POST":
         selected_dance_ids = request.POST.getlist('dances')
@@ -137,15 +154,16 @@ def select_engagements(request):
         return redirect('home')
 
     return render(request, 'engage/skills.html', {
-        'dances': dances,
+        'dances_by_level': dances_by_level,
         'selected_dances': [e.dance for e in profile.engagements.all()],
         'title': 'Какие танцы вы хотите танцевать на балу?'
     })
 
 @login_required
 def dance_list(request):
-    dances = Dance.objects.all()
-    return render(request, 'engage/dance_list.html', {'dances': dances})
+    dances = ensure_dances_seeded().order_by('name')
+    dances_by_level = group_dances_by_level(dances)
+    return render(request, 'engage/dance_list.html', {'dances_by_level': dances_by_level})
 
 @login_required
 @require_POST
@@ -190,7 +208,7 @@ def engagement_list(request):
     if status_filter:
         my_engagements = my_engagements.filter(status=status_filter)
 
-    all_dances = Dance.objects.all()
+    all_dances = ensure_dances_seeded().order_by('name')
 
     return render(request, 'engage/engagement_list.html', {
         'my_engagements': my_engagements,

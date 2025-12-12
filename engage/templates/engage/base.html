@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -6,60 +7,48 @@
     <title>{% block title %}Ангажирование на бал{% endblock %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <style>
-        body {
-            background: radial-gradient(circle at 10% 20%, rgba(255, 182, 193, 0.3) 0, transparent 25%),
-                        radial-gradient(circle at 90% 10%, rgba(0, 123, 255, 0.2) 0, transparent 20%),
-                        radial-gradient(circle at 50% 80%, rgba(13, 110, 253, 0.15) 0, transparent 30%);
-            min-height: 100vh;
-        }
-        .navbar-brand span {
-            letter-spacing: 1px;
-        }
-        .card-glow {
-            box-shadow: 0 1rem 3rem rgba(0,0,0,0.08);
-            border: none;
-        }
-    </style>
+    <link rel="stylesheet" href="{% static 'engage/winter.css' %}">
     {% block extra_head %}{% endblock %}
 </head>
-<body class="bg-body-tertiary">
-<nav class="navbar navbar-expand-lg bg-white shadow-sm sticky-top">
+<body class="text-white">
+<div class="winter-snow"></div>
+<div class="winter-aurora"></div>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-opacity-75 shadow-sm sticky-top border-bottom border-light-subtle" style="backdrop-filter: blur(6px); z-index: 10;">
     <div class="container">
-        <a class="navbar-brand fw-bold text-primary" href="{% url 'home' %}">
-            <i class="bi bi-balloon-heart-fill me-2"></i><span>Dance Engage</span>
+        <a class="navbar-brand fw-bold text-white" href="{% url 'home' %}">
+            <i class="bi bi-snow2 me-2 text-info"></i><span>Dance Engage</span>
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto align-items-lg-center">
-                <li class="nav-item"><a class="nav-link" href="{% url 'dance_list' %}">Танцы</a></li>
+                <li class="nav-item"><a class="nav-link text-white" href="{% url 'dance_list' %}">Танцы</a></li>
                 {% if user.is_authenticated %}
-                    <li class="nav-item"><a class="nav-link" href="{% url 'engagement_list' %}">Ангажирования</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'select_skills' %}">Навыки</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'edit_profile' %}">Профиль</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="{% url 'engagement_list' %}">Ангажирования</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="{% url 'select_skills' %}">Мой репертуар</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="{% url 'edit_profile' %}">Профиль</a></li>
                     <li class="nav-item">
                         <form method="post" action="{% url 'logout' %}" class="ms-lg-3">
                             {% csrf_token %}
-                            <button class="btn btn-outline-danger btn-sm">Выйти</button>
+                            <button class="btn btn-outline-light btn-sm">Выйти</button>
                         </form>
                     </li>
                 {% else %}
-                    <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">Вход</a></li>
-                    <li class="nav-item"><a class="btn btn-primary ms-lg-3" href="{% url 'register' %}">Регистрация</a></li>
+                    <li class="nav-item"><a class="nav-link text-white" href="{% url 'login' %}">Вход</a></li>
+                    <li class="nav-item"><a class="btn btn-info text-dark ms-lg-3" href="{% url 'register' %}">Регистрация</a></li>
                 {% endif %}
             </ul>
         </div>
     </div>
 </nav>
 
-<main class="py-4">
-    <div class="container">
+<main class="py-4 position-relative" style="z-index: 2;">
+    <div class="container-xxl">
         {% if messages %}
             <div class="mb-4">
                 {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow" role="alert">
                         {{ message }}
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Закрыть"></button>
                     </div>
@@ -70,9 +59,10 @@
     </div>
 </main>
 
-<footer class="py-4 bg-white border-top mt-auto">
-    <div class="container text-center text-muted small">
-        Сделано для друзей бала · Улучшаем UX & UI
+<footer class="py-4 bg-dark bg-opacity-75 border-top border-light-subtle text-white" style="backdrop-filter: blur(6px);">
+    <div class="container text-center small">
+        Вдохновлено школой бала им. Евгении Куницкой · Зимнее волшебство создано для гостей на любых устройствах.<br>
+        Хотите поблагодарить создателя сайта? Подпишитесь на <a class="link-info" href="https://t.me/ryzenov0d" target="_blank" rel="noopener">t.me/ryzenov0d</a>.
     </div>
 </footer>
 

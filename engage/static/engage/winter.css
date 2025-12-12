@@ -1,0 +1,194 @@
+:root {
+  --winter-blue: #0d6efd;
+  --winter-dark: #0b132b;
+  --winter-light: rgba(255, 255, 255, 0.82);
+  --frost: rgba(255, 255, 255, 0.65);
+  --frost-border: rgba(255, 255, 255, 0.25);
+  --twinkle: 0 0 20px rgba(255, 255, 255, 0.35);
+}
+
+body {
+  min-height: 100vh;
+  background: radial-gradient(circle at 20% 20%, rgba(94, 160, 255, 0.25) 0, transparent 25%),
+    radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.25) 0, transparent 20%),
+    linear-gradient(180deg, #0b1f3a 0%, #102542 40%, #0b1a32 100%);
+  color: #0c1628;
+  position: relative;
+  overflow-x: hidden;
+}
+
+.winter-snow {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  background-image: radial-gradient(2px 2px at 20% 20%, rgba(255, 255, 255, 0.8)),
+    radial-gradient(2px 2px at 80% 30%, rgba(255, 255, 255, 0.7)),
+    radial-gradient(3px 3px at 40% 80%, rgba(255, 255, 255, 0.6)),
+    radial-gradient(2px 2px at 60% 60%, rgba(255, 255, 255, 0.5));
+  background-size: 400px 400px;
+  animation: snowfall 18s linear infinite;
+  opacity: 0.65;
+  z-index: 1;
+}
+
+.winter-aurora {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(60% 40% at 30% 20%, rgba(103, 197, 255, 0.16), transparent),
+    radial-gradient(45% 35% at 70% 15%, rgba(255, 255, 255, 0.14), transparent),
+    radial-gradient(50% 30% at 50% 80%, rgba(111, 66, 193, 0.12), transparent);
+  filter: blur(30px);
+  animation: auroraShift 20s ease-in-out infinite alternate;
+  z-index: 0;
+}
+
+@keyframes snowfall {
+  0% {
+    transform: translateY(-10%);
+  }
+  100% {
+    transform: translateY(10%);
+  }
+}
+
+@keyframes auroraShift {
+  0% {
+    transform: translateY(-10px) scale(1);
+  }
+  100% {
+    transform: translateY(10px) scale(1.05);
+  }
+}
+
+.winter-glow {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.02));
+  border: 1px solid var(--frost-border);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.25), var(--twinkle);
+}
+
+.frosted-card {
+  background: var(--winter-light);
+  border: 1px solid var(--frost-border);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), 0 0 20px rgba(255, 255, 255, 0.1);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.frosted-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2), var(--twinkle);
+}
+
+.aurora-border {
+  border: 1px solid rgba(111, 197, 255, 0.3) !important;
+  box-shadow: 0 0 0 1px rgba(111, 197, 255, 0.12), 0 10px 35px rgba(0, 0, 0, 0.08);
+}
+
+.shimmering-text {
+  background: linear-gradient(120deg, #fff, #d9f2ff, #b3e5ff, #fff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 6s linear infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.winter-badge {
+  background: linear-gradient(120deg, #5bc0ff, #e8f1ff);
+  color: #0b132b;
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  font-weight: 600;
+  box-shadow: var(--twinkle);
+}
+
+.winter-hero {
+  background: linear-gradient(115deg, rgba(13, 110, 253, 0.15), rgba(255, 255, 255, 0.1));
+  border: 1px solid var(--frost-border);
+  color: #eaf4ff;
+  position: relative;
+  overflow: hidden;
+}
+
+.winter-hero::after,
+.winter-hero::before {
+  content: "";
+  position: absolute;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0, transparent 70%);
+  filter: blur(2px);
+}
+
+.winter-hero::before {
+  top: -40px;
+  left: -60px;
+}
+
+.winter-hero::after {
+  bottom: -40px;
+  right: -50px;
+}
+
+.soft-fade {
+  animation: softFade 0.6s ease;
+}
+
+@keyframes softFade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.glass-button {
+  background: rgba(255, 255, 255, 0.12);
+  color: #eaf4ff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(6px);
+  box-shadow: var(--twinkle);
+}
+
+.glass-button:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+
+.snow-divider {
+  height: 1px;
+  width: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  margin: 0.75rem 0;
+}
+
+.avatar-mask {
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  box-shadow: var(--twinkle);
+}
+
+@media (max-width: 767px) {
+  .navbar-brand span {
+    display: none;
+  }
+  .winter-hero {
+    text-align: center;
+  }
+  .winter-hero .btn-group {
+    justify-content: center;
+  }
+  .stats-grid .card {
+    min-height: 120px;
+  }
+}

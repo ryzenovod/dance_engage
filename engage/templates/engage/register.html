@@ -17,6 +17,14 @@
                         </div>
                     {% endif %}
 
+                    <div class="alert alert-warning d-flex align-items-start" role="alert">
+                        <i class="bi bi-shield-lock me-2 mt-1"></i>
+                        <div>
+                            Укажите ник для поиска здесь, а своё настоящее имя и фамилию — чтобы партнёр смог узнать вас на балу
+                            после взаимного мэтча. Фото профиля откроется ему только при подтверждении.
+                        </div>
+                    </div>
+
                     <div class="mb-3">
                         {{ form.username.label_tag }}
                         {{ form.username }}
@@ -26,6 +34,29 @@
                         {% for error in form.username.errors %}
                             <div class="invalid-feedback d-block">{{ error }}</div>
                         {% endfor %}
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            {{ form.first_name.label_tag }}
+                            {{ form.first_name }}
+                            {% if form.first_name.help_text %}
+                                <div class="form-text">{{ form.first_name.help_text }}</div>
+                            {% endif %}
+                            {% for error in form.first_name.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
+                        <div class="col-md-6">
+                            {{ form.last_name.label_tag }}
+                            {{ form.last_name }}
+                            {% if form.last_name.help_text %}
+                                <div class="form-text">{{ form.last_name.help_text }}</div>
+                            {% endif %}
+                            {% for error in form.last_name.errors %}
+                                <div class="invalid-feedback d-block">{{ error }}</div>
+                            {% endfor %}
+                        </div>
                     </div>
 
                     <div class="mb-3">
