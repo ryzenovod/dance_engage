@@ -7,26 +7,31 @@
             <h2 class="mb-0"><i class="bi bi-music-note-list me-2"></i>Выберите танец</h2>
         </div>
         <div class="card-body p-4">
-            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-                {% for dance in dances %}
-                    <div class="col">
-                        <div class="card h-100 shadow-sm">
-                            <div class="card-body">
-                                <h5 class="card-title"><i class="bi bi-music-note me-2"></i>{{ dance.name }}</h5>
-                                <div class="d-flex gap-2 mb-3">
-                                    <span class="badge bg-warning text-dark">{{ dance.level }}</span>
-                                    <span class="badge bg-secondary">{% if dance.has_partner %}Партнёр есть{% else %}Ищу партнёра{% endif %}</span>
+            {% for level, level_dances in dances_by_level %}
+                <div class="mb-4">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <h4 class="mb-0"><i class="bi bi-stars me-2"></i>{{ level }}</h4>
+                        <span class="badge {% if level == 'Начальный' %}bg-warning text-dark{% elif level == 'Средний' %}bg-info{% else %}bg-dark{% endif %}">{{ level_dances|length }} танцев</span>
+                    </div>
+                    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                        {% for dance in level_dances %}
+                            <div class="col">
+                                <div class="card h-100 shadow-sm">
+                                    <div class="card-body">
+                                        <h5 class="card-title"><i class="bi bi-music-note me-2"></i>{{ dance.name }}</h5>
+                                        <div class="d-flex gap-2 mb-3">
+                                            <span class="badge bg-secondary">{% if dance.has_partner %}Партнёр есть{% else %}Ищу партнёра{% endif %}</span>
+                                        </div>
+                                        <a href="{% url 'partner_list' dance.id %}" class="btn btn-primary w-100"><i class="bi bi-search me-2"></i>Выбрать партнёра</a>
+                                    </div>
                                 </div>
-                                <a href="{% url 'partner_list' dance.id %}" class="btn btn-primary w-100"><i class="bi bi-search me-2"></i>Выбрать партнёра</a>
                             </div>
-                        </div>
+                        {% endfor %}
                     </div>
-                {% empty %}
-                    <div class="col-12">
-                        <div class="alert alert-info"><i class="bi bi-info-circle me-2"></i>Нет доступных танцев</div>
-                    </div>
-                {% endfor %}
-            </div>
+                </div>
+            {% empty %}
+                <div class="alert alert-info"><i class="bi bi-info-circle me-2"></i>Нет доступных танцев</div>
+            {% endfor %}
         </div>
     </div>
 </div>

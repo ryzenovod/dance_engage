@@ -1,4 +1,5 @@
 {% extends 'engage/base.html' %}
+{% load static %}
 {% block title %}Ангажирование на бал{% endblock %}
 {% block content %}
 <div class="row align-items-center mb-5">
@@ -117,10 +118,22 @@
             {% for engagement in engagements %}
                 <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center flex-wrap gap-3">
                     <div class="d-flex align-items-center gap-3">
-                        <img src="{{ engagement.partner.avatar_url }}" class="rounded-circle" style="width:48px; height:48px; object-fit: cover;" alt="Аватар партнёра">
+                        {% if engagement.status == 'confirmed' %}
+                            <img src="{{ engagement.partner.avatar_url }}" class="rounded-circle" style="width:48px; height:48px; object-fit: cover;" alt="Фото {{ engagement.partner.user.get_full_name|default:engagement.partner.user.username }}">
+                        {% else %}
+                            <div class="rounded-circle bg-light text-secondary d-flex align-items-center justify-content-center" style="width:48px; height:48px;">
+                                <i class="bi bi-person-fill-lock"></i>
+                            </div>
+                        {% endif %}
                         <div>
-                            <h6 class="mb-1">{{ engagement.partner.user.username }}</h6>
-                            <small class="text-muted">{{ engagement.dance.name }}</small>
+                            {% if engagement.status == 'confirmed' %}
+                                <h6 class="mb-1">{{ engagement.partner.user.get_full_name|default:engagement.partner.user.username }}</h6>
+                                <small class="text-muted">Ник: {{ engagement.partner.user.username }}</small>
+                            {% else %}
+                                <h6 class="mb-1">Ник: {{ engagement.partner.user.username }}</h6>
+                                <small class="text-muted">Имя и фото откроются после взаимного мэтча</small>
+                            {% endif %}
+                            <div class="small text-muted">{{ engagement.dance.name }}</div>
                         </div>
                     </div>
                     <span class="badge bg-{{ engagement.status_badge_class }} px-3 py-2">{{ engagement.get_status_display }}</span>

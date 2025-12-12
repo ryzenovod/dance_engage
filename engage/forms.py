@@ -12,10 +12,12 @@ class CustomUserCreationForm(UserCreationForm):
         ('Кавалер', 'Кавалер'),
     ]
     role = forms.ChoiceField(choices=ROLE_CHOICES, label='Роль на балу')
+    first_name = forms.CharField(label='Реальное имя')
+    last_name = forms.CharField(label='Реальная фамилия')
 
     class Meta:
         model = User
-        fields = ['username', 'password1', 'password2', 'role']
+        fields = ['username', 'first_name', 'last_name', 'password1', 'password2', 'role']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -23,6 +25,18 @@ class CustomUserCreationForm(UserCreationForm):
         self.fields['username'].help_text = 'Используйте только буквы, цифры и символы @/./+/-/_.'
         self.fields['username'].widget.attrs.update({
             'placeholder': 'Например, boston_valzer',
+            'class': 'form-control'
+        })
+
+        self.fields['first_name'].help_text = 'Это имя увидят только ваши мэтчи.'
+        self.fields['first_name'].widget.attrs.update({
+            'placeholder': 'Например, Анна',
+            'class': 'form-control'
+        })
+
+        self.fields['last_name'].help_text = 'Поможет партнёру узнать вас в реальности после взаимного мэтча.'
+        self.fields['last_name'].widget.attrs.update({
+            'placeholder': 'Например, Иванова',
             'class': 'form-control'
         })
 
@@ -44,10 +58,19 @@ class CustomUserCreationForm(UserCreationForm):
         self.fields['role'].help_text = 'Выберите подходящую роль, чтобы мы показывали правильных партнёров.'
         self.fields['role'].widget.attrs.update({'class': 'form-select'})
 
-    def save(self, commit=True):
-        user = super().save(commit=commit)
+        # Делаем реальные данные обязательными, чтобы они раскрывались при мэтче
+        self.fields['first_name'].required = True
+        self.fields['last_name'].required = True
 
-        if not hasattr(user, 'userprofile'):
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+
+        if commit:
+            user.save()
+
+        if commit and not hasattr(user, 'userprofile'):
             UserProfile.objects.create(
                 user=user,
                 role=self.cleaned_data['role']
