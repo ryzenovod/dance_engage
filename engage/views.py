@@ -25,6 +25,20 @@ def group_dances_by_level(dances):
 
     return ordered_groups + leftovers
 
+
+LEVEL_ORDER = ['Начальный', 'Средний', 'Продвинутый']
+
+
+def group_dances_by_level(dances):
+    buckets = defaultdict(list)
+    for dance in dances:
+        buckets[dance.level].append(dance)
+
+    ordered_groups = [(level, buckets[level]) for level in LEVEL_ORDER if buckets[level]]
+    leftovers = [(level, group) for level, group in buckets.items() if level not in LEVEL_ORDER]
+
+    return ordered_groups + leftovers
+
 @login_required
 @require_POST
 def confirm_engagement(request, engagement_id):
