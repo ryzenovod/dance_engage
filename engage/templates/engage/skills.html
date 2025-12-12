@@ -1,15 +1,15 @@
 {% extends 'engage/base.html' %}
-{% block title %}Выбор навыков{% endblock %}
+{% block title %}Мой репертуар{% endblock %}
 {% block content %}
-<div class="container py-4">
+<div class="py-2 soft-fade">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
         <div>
-            <h2 class="mb-1">Выберите танцы, которые умеете</h2>
-            <p class="text-muted mb-0">Отметьте всё, что готовы показать на паркете.</p>
+            <h2 class="mb-1">Соберите репертуар</h2>
+            <p class="text-white-50 mb-0">Отметьте всё, что готовы показать на паркете. Каталог автоматически обновлён под Зимний бал.</p>
         </div>
-        <button type="button" class="btn btn-outline-primary" onclick="selectAllDances()"><i class="bi bi-check-all me-2"></i>Умею всё и сразу</button>
+        <button type="button" class="btn btn-outline-light" onclick="selectAllDances()"><i class="bi bi-check-all me-2"></i>Умею всё и сразу</button>
     </div>
-    <form method="post">
+    <form method="post" class="soft-fade">
         {% csrf_token %}
         {% for level, level_dances in dances_by_level %}
             <div class="mb-4">
@@ -20,7 +20,7 @@
                 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
                     {% for dance in level_dances %}
                         <div class="col">
-                            <div class="card shadow-sm h-100">
+                            <div class="card h-100 frosted-card text-dark">
                                 <div class="card-body text-center">
                                     <h5 class="card-title">{{ dance.name }}</h5>
                                     <div class="form-check mt-3">
@@ -35,7 +35,7 @@
             </div>
         {% endfor %}
         <div class="d-grid gap-2 mt-4">
-            <button type="submit" class="btn btn-primary btn-lg py-3">Сохранить</button>
+            <button type="submit" class="btn btn-info text-dark btn-lg py-3">Сохранить репертуар</button>
         </div>
     </form>
 </div>

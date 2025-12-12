@@ -2,50 +2,58 @@
 {% load static %}
 {% block title %}Ангажирование на бал{% endblock %}
 {% block content %}
-<div class="row align-items-center mb-5">
+<section class="row g-4 align-items-center mb-5 soft-fade">
     <div class="col-lg-7">
-        <h1 class="display-5 fw-bold mb-3">Добро пожаловать на бал!</h1>
-        <p class="lead text-muted mb-4">Подберите партнёра, отметьте свои навыки и договоритесь о танцах ещё до выхода на паркет.</p>
-        {% if user.is_authenticated %}
-            <div class="d-flex flex-wrap gap-2">
-                <a class="btn btn-primary" href="{% url 'select_skills' %}"><i class="bi bi-magic me-2"></i>Обновить навыки</a>
-                <a class="btn btn-outline-primary" href="{% url 'engagement_list' %}"><i class="bi bi-heart-arrow me-2"></i>Мои ангажирования</a>
+        <div class="p-4 p-md-5 rounded-4 winter-hero shadow-lg h-100">
+            <div class="d-inline-flex align-items-center gap-2 mb-3 winter-badge text-dark shimmering-text">
+                <i class="bi bi-stars"></i>
+                <span>Зимний бал 2025 · ДВФУ · Школа бала им. Евгении Куницкой</span>
             </div>
-        {% else %}
-            <div class="card card-glow p-4">
-                <div class="d-flex align-items-center gap-3 mb-3">
-                    <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width:56px; height:56px;">
-                        <i class="bi bi-person-plus fs-4"></i>
-                    </div>
-                    <div>
-                        <h5 class="mb-1">Новый гость</h5>
-                        <p class="mb-0 text-muted">Создайте аккаунт и отметьте свою роль.</p>
+            <h1 class="display-5 fw-bold mb-3">Добро пожаловать в волшебство бала!</h1>
+            <p class="lead text-white-50 mb-4">Подберите партнёра, соберите свой репертуар и договоритесь о танцах ещё до выхода на паркет. Реальные имена и фото откроются после взаимного мэтча.</p>
+            {% if user.is_authenticated %}
+                <div class="d-flex flex-wrap gap-2 btn-group">
+                    <a class="btn btn-info text-dark shadow-sm" href="{% url 'select_skills' %}"><i class="bi bi-magic me-2"></i>Обновить репертуар</a>
+                    <a class="btn glass-button" href="{% url 'engagement_list' %}"><i class="bi bi-heart-arrow me-2"></i>Мои ангажирования</a>
+                </div>
+            {% else %}
+                <div class="card frosted-card text-dark">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <div class="bg-info text-dark rounded-circle d-flex align-items-center justify-content-center" style="width:56px; height:56px;">
+                                <i class="bi bi-person-plus fs-4"></i>
+                            </div>
+                            <div>
+                                <h5 class="mb-1">Новый гость</h5>
+                                <p class="mb-0 text-muted">Укажите реальное имя и фамилию — они раскроются только в случае взаимного мэтча.</p>
+                            </div>
+                        </div>
+                        <form method="post" action="{% url 'register' %}">
+                            {% csrf_token %}
+                            {{ register_form.as_p }}
+                            <button type="submit" class="btn btn-info text-dark w-100">Регистрация</button>
+                        </form>
+                        <div class="text-center mt-3">
+                            <a href="{% url 'login' %}" class="small text-decoration-underline text-primary">Уже с нами? Войти</a>
+                        </div>
                     </div>
                 </div>
-                <form method="post" action="{% url 'register' %}">
-                    {% csrf_token %}
-                    {{ register_form.as_p }}
-                    <button type="submit" class="btn btn-primary w-100">Регистрация</button>
-                </form>
-                <div class="text-center mt-3">
-                    <a href="{% url 'login' %}" class="small">Уже с нами? Войти</a>
-                </div>
-            </div>
-        {% endif %}
+            {% endif %}
+        </div>
     </div>
     <div class="col-lg-5">
-        <div class="row g-3">
+        <div class="row g-3 stats-grid">
             <div class="col-6">
-                <div class="card text-center card-glow">
+                <div class="card text-center frosted-card text-dark h-100">
                     <div class="card-body">
                         <div class="text-primary mb-2"><i class="bi bi-people-fill fs-3"></i></div>
                         <h3 class="mb-0">{{ skills_count }}</h3>
-                        <small class="text-muted">Танцев в профиле</small>
+                        <small class="text-muted">Танцев в репертуаре</small>
                     </div>
                 </div>
             </div>
             <div class="col-6">
-                <div class="card text-center card-glow">
+                <div class="card text-center frosted-card text-dark h-100">
                     <div class="card-body">
                         <div class="text-success mb-2"><i class="bi bi-star-fill fs-3"></i></div>
                         <h3 class="mb-0">{{ engagement_stats.confirmed }}</h3>
@@ -54,7 +62,7 @@
                 </div>
             </div>
             <div class="col-12">
-                <div class="card text-center card-glow">
+                <div class="card text-center frosted-card text-dark h-100">
                     <div class="card-body">
                         <div class="text-warning mb-2"><i class="bi bi-hourglass-split fs-3"></i></div>
                         <h3 class="mb-0">{{ engagement_stats.pending }}</h3>
@@ -64,32 +72,32 @@
             </div>
         </div>
     </div>
-</div>
+</section>
 
 {% if user.is_authenticated %}
-<div class="card card-glow mb-4">
+<div class="card winter-glow mb-4 text-white">
     <div class="card-body">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
             <div class="d-flex align-items-center gap-3">
-                <img src="{{ profile.avatar_url }}" class="rounded-circle shadow" style="width:72px; height:72px; object-fit: cover;" alt="Аватар">
+                <img src="{{ profile.avatar_url }}" class="rounded-circle shadow avatar-mask" style="width:72px; height:72px; object-fit: cover;" alt="Аватар">
                 <div>
-                    <h4 class="mb-1">{{ user.username }}</h4>
-                    <span class="badge {% if profile.role == 'Дама' %}bg-danger{% else %}bg-primary{% endif %}">{{ profile.role }}</span>
+                    <h4 class="mb-1 text-white">{{ user.username }}</h4>
+                    <span class="badge {% if profile.role == 'Дама' %}bg-danger{% else %}bg-info text-dark{% endif %}">{{ profile.role}}</span>
                 </div>
             </div>
             <div class="d-flex gap-2">
-                <a href="{% url 'edit_profile' %}" class="btn btn-outline-secondary"><i class="bi bi-gear me-2"></i>Профиль</a>
-                <a href="{% url 'select_skills' %}" class="btn btn-primary"><i class="bi bi-pencil-square me-2"></i>Навыки</a>
+                <a href="{% url 'edit_profile' %}" class="btn btn-outline-light"><i class="bi bi-gear me-2"></i>Профиль</a>
+                <a href="{% url 'select_skills' %}" class="btn btn-info text-dark"><i class="bi bi-pencil-square me-2"></i>Репертуар</a>
             </div>
         </div>
     </div>
 </div>
 
-<div class="card card-glow mb-5">
+<div class="card winter-glow mb-5 text-white">
     <div class="card-body">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
             <h3 class="mb-0"><i class="bi bi-heart-arrow me-2"></i>Мои мэтчи</h3>
-            <a class="btn btn-outline-secondary btn-sm" href="{% url 'engagement_list' %}"><i class="bi bi-list-check me-2"></i>Все приглашения</a>
+            <a class="btn btn-outline-light btn-sm" href="{% url 'engagement_list' %}"><i class="bi bi-list-check me-2"></i>Все приглашения</a>
         </div>
         <form method="get" class="row g-3 mb-4">
             <div class="col-md-6">
@@ -111,7 +119,7 @@
                 </select>
             </div>
             <div class="col-md-2 align-self-end">
-                <button type="submit" class="btn btn-outline-primary w-100"><i class="bi bi-funnel me-1"></i>Фильтр</button>
+                <button type="submit" class="btn btn-outline-light w-100"><i class="bi bi-funnel me-1"></i>Фильтр</button>
             </div>
         </form>
         <div class="list-group">
@@ -149,20 +157,20 @@
 
 <section class="mb-5">
     <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
-        <h3 class="mb-0"><i class="bi bi-collection-play me-2"></i>Мои танцы</h3>
-        <a href="{% url 'select_skills' %}" class="btn btn-outline-primary btn-sm"><i class="bi bi-plus-circle me-1"></i>Добавить</a>
+        <h3 class="mb-0"><i class="bi bi-collection-play me-2"></i>Мой репертуар</h3>
+        <a href="{% url 'select_skills' %}" class="btn btn-outline-light btn-sm"><i class="bi bi-plus-circle me-1"></i>Добавить</a>
     </div>
     <div class="row g-4">
         {% for dance in profile.skills.all %}
             <div class="col-md-6 col-lg-4">
-                <div class="card h-100 card-glow">
+                <div class="card h-100 frosted-card text-dark">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-start mb-3">
                             <h5 class="card-title mb-0"><i class="bi bi-music-note-beamed me-2"></i>{{ dance.name }}</h5>
                             <span class="badge bg-secondary">{{ dance.level }}</span>
                         </div>
                         <p class="text-muted small mb-3">Отметьте готовность к поиску партнёра и отправьте приглашение.</p>
-                        <a href="{% url 'partner_list' dance.id %}" class="btn btn-primary w-100">
+                        <a href="{% url 'partner_list' dance.id %}" class="btn btn-info text-dark w-100">
                             <i class="bi bi-search-heart me-2"></i>Найти партнёра
                         </a>
                     </div>
@@ -182,4 +190,43 @@
     </div>
 </section>
 {% endif %}
+
+<section class="mb-5 soft-fade">
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="card frosted-card h-100 text-dark aurora-border">
+                <div class="card-body d-flex flex-column gap-3">
+                    <div class="d-inline-flex align-items-center gap-2 winter-badge text-dark shimmering-text">
+                        <i class="bi bi-magic"></i>
+                        <span>Волшебство зимнего бала</span>
+                    </div>
+                    <h4 class="mb-0">Сияние, которое ведёт к партнёру</h4>
+                    <p class="mb-0 text-muted">Собирайте репертуар, отправляйте приглашения и наблюдайте, как после взаимного мэтча раскрываются настоящие имена и фотографии. Сайт бережно относится к гостям на мобильных устройствах, поэтому магия останется с вами и в дороге.</p>
+                    <div class="d-flex flex-wrap gap-2">
+                        <a href="{% url 'dance_list' %}" class="btn btn-outline-primary"><i class="bi bi-music-note-beamed me-2"></i>Открыть каталог</a>
+                        <a href="{% url 'select_skills' %}" class="btn btn-info text-dark"><i class="bi bi-snow me-2"></i>Мой репертуар</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="card frosted-card h-100 text-dark aurora-border">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <div>
+                        <div class="d-inline-flex align-items-center gap-2 winter-badge text-dark">
+                            <i class="bi bi-journal-richtext"></i>
+                            <span>Традиции</span>
+                        </div>
+                        <h4 class="mt-3 mb-2">Школа бала им. Евгении Куницкой</h4>
+                        <p class="text-muted mb-0">Именно здесь мы учимся культуре бального этикета и создаём атмосферу, в которой легко найти своего человека.</p>
+                    </div>
+                    <div class="mt-3">
+                        <a class="btn btn-outline-dark w-100" href="{% url 'engagement_list' %}"><i class="bi bi-heart-half me-2"></i>Перейти к мэтчам</a>
+                        <div class="small text-muted mt-2">Спасибо за участие и поддержку — если хочется отблагодарить создателя, загляните в телеграм <a href="https://t.me/ryzenov0d" target="_blank" rel="noopener">t.me/ryzenov0d</a>.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}
